@@ -5,6 +5,7 @@ for x in input_string:
     length = length + 1
 print(length)
 
+
 #Task:2 – Largest List###
 import random
 
@@ -18,6 +19,7 @@ for i in range(len(number)):
         i = i + 1
 print(max)
 
+
 #Task:3 – Character Frequency###
 
 input_string = input("Please enter the string")
@@ -30,6 +32,7 @@ for i in string:
         count_dist[i] = 1
 print(count_dist)
 
+
 #Task:4 – Sorted List of Tuples###
 
 res = []
@@ -41,6 +44,7 @@ for i in range(0, 10):
 # print(res)
 sorted_list = sorted(res, key=lambda x: x[2])
 print(sorted_list)
+
 
 #Task:5 – Check Brackets###
 input_string = input("Please enter the mathematical expression string")
@@ -55,6 +59,7 @@ if openbracket == closebracket:
     print("Correct input")
 else:
     print("Incorrect input")
+    
 
 #Task:6 – Check Brackets II###
 input_string = input("Please enter the mathematical expression string")
@@ -73,6 +78,7 @@ if ('(' in dist) & (')' in dist) & ('[' in dist) & (']' in dist) & ('{' in dist)
 else:
     print("Incorrect input")
 
+    
 #Task:7 – Queue###
 queue = []
 while True:
@@ -85,6 +91,7 @@ while True:
             # print(queue[-1])
             print(queue.pop(0))
         break
+        
 
 #Task:8 – Unlimited Power###
 
@@ -96,6 +103,7 @@ def power(x, n):
 
 
 # print(power(3,2))
+
 
 #Task:9 – Unlimited Power II###
 def factorial(x):
