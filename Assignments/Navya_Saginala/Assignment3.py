@@ -48,10 +48,6 @@ def withdraw(name, amount, dist):
         print("You are not a registered customer")
 
 
-# Testing
-dist = {'John': None, 'Iris': 100, "Belliyar": 50}
-span_dictionary(dist)
-print(dist)
 
 #Task-2:Classes ##
 
