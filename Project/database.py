@@ -13,7 +13,7 @@ class UserSeatDatabase ():
         self.connection = sqlite3.connect(self.database_file)
         self.cursor = self.connection.cursor()
 
-        # creates 4 users already of whom one is a admin user
+        # creates 4 users already of whom one is an admin user
         self.user1 = User(1, 'elms', 'Elmo', 'passwort123')
         self.user2 = User(2, 'kleinerTim', 'Timmy', 'abrakadabra')
         self.user3 = User(3, 'pizza', 'Hungry Person', 'pizza')
