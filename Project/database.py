@@ -177,4 +177,4 @@ except:
     sys.exit(1)
 finally:
     if connection:
-        connection.close() # after we are done, we should close the connection with the database, always..
+        connection.close() # after we are done, we should close the connection with the database, always.
