@@ -1,0 +1,165 @@
+<html>
+<title>DoenAir</title>
+<head>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/mystyle.css') }}">
+</head>
+<body style="margin:0px">
+<div id="navbar" style="height:50px;display:flex;align-items:center;justify-content:right;position:fixed;width:100%;background:white;z-index:2;">
+  <a href="login" style="margin:50px;font-size:20px;color:black;text-decoration:none">Login</a>
+  <a href="statistics" style="margin:50px;font-size:20px;color:black;text-decoration:none">Statistics</a>
+  <a href="help" style="margin:50px;font-size:20px;color:black;text-decoration:none">Help</a>
+</div>
+<img src="https://images.wallpaperscraft.com/image/single/airplane_sky_flight_clouds_height_118356_3840x2160.jpg" alt="Plane" style="width:100%;height:100%">
+<div style="position:absolute;top:40%;left:25%;width:50%;background-color:white;box-shadow: 0px 0px 20px BLACK;padding:20px">
+	<h1>Where do you want to go?</h1>
+	<form method="post">
+		<div style="display:flex;justify-content:space-evenly;">
+			<div style="display:flex;flex-direction:column">
+				<p style="font-size:25px;text-align:center;margin-bottom:10px">From</p>
+				<input type="text" id="from" name="from" style="height:50px;font-size:20px;border:none;background-color:lightgray;">
+			</div>
+			<div style="display:flex;flex-direction:column">
+				<p style="font-size:25px;text-align:center;margin-bottom:10px">To</p>
+				<input type="text" id="to" name="to" style="height:50px;font-size:20px;border:none;background-color:lightgray;">
+			</div>
+			<div style="display:flex;flex-direction:column">
+				<p style="font-size:25px;text-align:center;margin-bottom:10px">Departure</p>
+				<input type="text" id="Departure" name="Departure" style="height:50px;font-size:20px;border:none;background-color:lightgray;">
+			</div>
+		</div>
+		<button style="margin:20px 50px 0px 50px;height:50px;font-size:20px;padding: 0px 70px 0px 70px;border:none;background-color:lightsteelblue;border-radius:10px;">Search</button>
+	</form>
+</div>
+<div style="display:flex;justify-content:center;padding-top:50px">
+	<div style="width:50%;">
+		{% for item in data %}
+		<div style="margin:0px 0px 50px 0px;box-shadow: 0px 0px 10px GRAY; padding:20px;">
+			<div style="display:flex;justify-content:space-around">
+				<div style="display:flex;flex-direction:column;align-items:center;margin:20px 0px 0px 50px">
+					<p style="font-size:30px;margin:0px">{{item[2]}}</p>
+					<p style="font-size:15px;color:grey;margin:0px;text-align:center">{{item[1]}}</p>
+				</div>
+				<div style="display:flex;align-items:center;">
+					<p style="font-size:20px;margin:0px">From: {{item[3]}}</p>
+				</div>
+				<div style="display:flex;align-items:center;">
+					<p style="font-size:20px;margin:0px">To: {{item[4]}}</p>
+				</div>
+				<div style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+					<p style="font-size:20px;margin:0px">Duration</p>
+					<p style="font-size:15px;margin:0px;text-align:center">{{item[5]}}h</p>
+				</div>
+			</div>
+			<div style="display:flex;justify-content: space-around;margin: 50px 0px 0px 0px">
+				<div style="display:flex;align-items:center;">
+					<p  style="font-size:20px;margin:0px;text-align:center">Departure: {{item[6]}} - {{item[7]}}</p>
+				</div>
+				<div style="display:flex;flex-direction:column;align-items:center;margin:20px 0px 0px 50px">
+					<p  style="font-size:20px;margin:0px;text-align:center">Prize: ${{item[8]}}</p>
+					<p  style="font-size:20px;margin:0px;text-align:center">Seats remaining: {{item[9]}}</p>
+				</div>
+				<button , onclick="openWindow(1)", name="book" style="height:50px;width:200px">Book Ticket</button>
+			</div>
+			<div id="seatwindow1" style="display:none;margin-top: 50px">
+				<h2>Choose your seats:</h2>
+				<div style="display:flex; justify-content:center">
+					{% for seats_height in range(item[10]) %}
+						<div style="width:min-content;margin:0px 10px 0px 10px">
+						<p style="text-align:center;margin: 5px 0px 2px 0px">{{"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[seats_height]}}</p>
+							{% for seats_width in range(item[11]) %}
+								{%if 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[seats_height]+seats_width|string in item[12]%}
+									<button style="background:red;height:40px;width:40px;border:none;border-radius:5px;margin:5px;box-shadow:4px 2px;" onclick="chooseSeat('{{'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[seats_height]}}'+{{seats_width}}, '{{item[1]}}', {{item[8]}}, true)" style="margin:1px 0px 1px 0px">{{seats_width}}</button>
+								{% else %}
+									<button style="background:green;height:40px;width:40px;border:none;border-radius:5px;margin:5px;box-shadow:4px 2px;" onclick="chooseSeat('{{'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[seats_height]}}'+{{seats_width}}, '{{item[1]}}', {{item[8]}}, false)" style="margin:1px 0px 1px 0px">{{seats_width}}</button>
+								{% endif %}
+							{% endfor %}
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+	<div style="width:20%;margin-left:50px;display:flex;flex-direction:column;padding:20px;border-radius:10px;margin-bottom:50px;background-color:antiquewhite">
+		<form method="post">
+			<h1 style="text-align:center">Warenkorb</h1>
+			<input name="order" id="inputOrder" type="text" style="display:none">
+			<div id="wk", style="display:flex;flex-direction:column">
+			</div>
+			<div style="display:flex;flex-direction:row;display:flex;justify-content:center;font-size:25px;">
+				<p>Cost: $</p>
+				<p id="cost">0</p>
+			</div>
+			<button style="border:none;padding:20px;border-radius:10px;background:lightsteelblue">Submit</button>
+		</form>
+	</div>
+</div>
+
+<script>
+
+let arr = [];
+
+function arrayRemove(arr, value) {    
+	return arr.filter(function(ele){ 
+		return ele != value; 
+	});
+}
+
+function chooseSeat(seat, id, prize, disabled) {
+	if (!disabled) {
+		const el = document.getElementById('cost');
+		const el2 = document.getElementById('wk');
+		const input = document.getElementById('inputOrder')
+		let cost = parseInt(el.innerText);
+		if (arr.length < 1) {
+			arr.push([id, seat]);
+			cost += prize;
+		} else {
+			let id_exits = false;
+			for (let i = 0; i < arr.length; i++) {
+				if (arr[i].includes(id)) {
+					id_exits = true;
+					if (arr[i].includes(seat)) {
+						arr[i] = arrayRemove(arr[i], seat);
+						cost -= prize;
+						if (arr[i].length < 2) {
+							arr = arrayRemove(arr, arr[i]);
+						}
+					} else {
+						arr[i].push(seat);
+						cost += prize;
+					}
+				}
+			}
+			if (!id_exits) {
+				arr.push([id, seat]);
+				cost += prize;
+			}
+		}
+		console.log(arr);
+		let text = "<div style='display:flex;flex-direction:column'>";
+			for (let i = 0; i < arr.length; i++) {
+				text += "<h2>FlightID: "+arr[i][0]+"</h2>";
+				for (let j = 1; j < arr[i].length; j++) {
+					text += "<p>Flightseat: "+arr[i][j]+"</p>";
+				}
+			}
+		text += "</div>";
+		el2.innerHTML = text;
+		el.innerText = cost;
+		input.value = arr
+	}
+}
+
+function openWindow(index) {
+	const el = document.getElementById('seatwindow' + index);
+	if (el.style.display == 'block') {
+		el.style['display'] = 'none';
+	} else {
+		el.style['display'] = 'block';
+	}
+}
+</script>
+
+</body>
+</html>
