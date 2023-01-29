@@ -1,0 +1,5 @@
+Seat_height	Seat_width
+10	6
+10	3
+5	6
+20	3	

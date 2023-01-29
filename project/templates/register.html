@@ -1,0 +1,26 @@
+<html>
+<title>DoenAir</title>
+<head>
+	<link rel="stylesheet" href="mystyle.css">
+</head>
+<body style="margin:0px">
+<img src="https://images.wallpaperscraft.com/image/single/airplane_sky_flight_clouds_height_118356_3840x2160.jpg" alt="Plane" style="width:100%;height:100%">
+<div style="position:absolute;top:40%;left:25%;width:50%;background-color:white;box-shadow: 0px 0px 20px BLACK;padding:20px">
+	<h1 style="text-align:center;">Login</h1>
+	<form method="post">
+		<div style="display:flex;justify-content:space-evenly;flex-direction:column;">
+			<input type="text" name="username" placeholder="Username" style="padding:20px;font-size:25px;margin:20px;">
+			<input type="text" name="name" placeholder="Real name" style="padding:20px;font-size:25px;margin:20px;">
+			<input type="text" name="email" placeholder="Email" style="padding:20px;font-size:25px;margin:20px;">
+			<input type="password" name="password" placeholder="Password" style="padding:20px;font-size:25px;margin:20px;">
+			<input type="password" name="passwordrepeat" placeholder="Repeat password" style="padding:20px;font-size:25px;margin:20px;">
+			<a href="login">Already have an account? Login here</a>
+			<button type="submit" style="margin:20px 50px 0px 50px;height:50px;font-size:20px;padding: 0px 70px 0px 70px;border:none;background-color:lightsteelblue;border-radius:10px;">Login</button>
+			{% for message in result %}
+				<h1 style="text-align:center;color:#b10000">{{message}}</h1>
+			{% endfor %}
+		</div>
+	</form>
+</div>
+</body>
+</html>
