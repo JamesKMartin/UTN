@@ -1,8 +1,85 @@
 <html>
-<title>DoenAir</title>
-<head>
-	<link rel="stylesheet" href="mystyle.css">
-</head>
-<body style="margin:0px">
+	<head>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/mystyle.css') }}">
+		<style>
+			
+			#navbar {
+				height: 50px;
+				display: flex;
+				align-items: center;
+				justify-content: flex-end;
+				position: fixed;
+				width: 100%;
+				background: rgb(253, 253, 253);
+				z-index: 2;
+			}
+			#navbar a {
+				margin: 50px;
+				font-size: 20px;
+				color: black;
+				text-decoration: none;
+			}
+			.container {
+				width: 80%;
+				margin-left: 50px;
+				display: flex;
+				text-align: left;
+				padding-top: 50px;
+				padding-right: 50px;
+				padding-right: 50px;
+				padding-bottom: 50px;
+			}
+			.content {
+				
+				margin-left: 50px;
+				text-align: left;
+				font-family: Helvetica, sans-serif;
+				color: white;
+			}
+			.content h1 {
+				margin-left: 50px;
+				margin-bottom: 50px;
+				text-align: left;
+			}
+
+			.content h2 {
+				margin-left: 50px;
+				margin-bottom: 50px;
+				text-align: left;
+			}
+			.content h3 {
+				margin-left: 50px;
+				text-align: left;
+			}
+			.content p, .content ul {
+				margin-left: 50px;
+				text-align: left;
+			}
+
+	
+		</style>
+	<body background="https://images.wallpaperscraft.com/image/single/airplane_sky_flight_clouds_height_118356_3840x2160.jpg" alt="Plane" style="width:100%;height:100%" bgproperties=fixed></body>
+		<title>DoenAir - Hilfe</title>
+	</head>
+	<body>
+		<div id="navbar">
+			<a href="login">Anmelden</a>
+			<a href="statistics">Statistiken</a>
+			<a href="help">Hilfe</a>
+		</div>
+		<div class="container">
+			<div class="content">
+				<h1>Hilfe</h1>
+				<h3>Was ist DoenAir?</h3>
+				<p>DoenAir ist eine Online-Plattform zur Buchung von Flügen. Sie können Flüge von verschiedenen Airlines suchen und vergleichen und den Flug buchen, der am besten zu Ihnen passt.</p>
+				<h2>Wie buche ich einen Flug?</h2>
+				<h3>Sie können einen Flug buchen, indem Sie folgende Schritte ausführen:</h3>
+					<p>Gehen Sie auf die Startseite und geben Sie Ihre Reisedetails (von, nach, Abreisedatum) ein</p>
+					<p>Klicken Sie auf die Schaltfläche Suchen und durchsuchen Sie die verfügbaren Flüge.</p>
+					<p>Wählen Sie den Flug aus, der am besten zu Ihnen passt, und klicken Sie auf die Schaltfläche Buchen.</p>
+					<p>Folgen Sie den Anweisungen auf dem Bildschirm, um den Buchungsprozess abzuschließen.</p>
+				</ul>
+				
 </body>
 </html>
+
