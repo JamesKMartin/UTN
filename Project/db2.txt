@@ -1,3 +1,0 @@
-PlaneID, Company, Start, Destination, Duration, Date, Time, Prize
-2	Lufthansa	Berlin	New York	12	23.02.2023	10:12	570
-4	Emirates	Dubai	Frankfurt	8	12.10.2023	23:32	420
