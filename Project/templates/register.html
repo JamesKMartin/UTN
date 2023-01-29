@@ -16,7 +16,7 @@
 			<input type="password" name="passwordrepeat" placeholder="Repeat password" style="padding:20px;font-size:25px;margin:20px;">
 			<a href="login">Already has an account? Login here</a>
 			<button type="submit" style="margin:20px 50px 0px 50px;height:50px;font-size:20px;padding: 0px 70px 0px 70px;border:none;background-color:lightsteelblue;border-radius:10px;">Login</button>
-			{% for message in data %}
+			{% for message in result %}
 				<h1 style="text-align:center;color:#b10000">{{message}}</h1>
 			{% endfor %}
 		</div>

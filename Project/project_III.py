@@ -1,189 +1,241 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from users import User,AdminUser
-import seats
-import json
-import sqlite3
-from sqlite3 import Error
-
-content = []
-
-app = Flask(__name__)
-
-conn = None
+import db
 
 user = None
 
-def create_connection(db_file):
-	try:
-		global conn
-		conn = sqlite3.connect(db_file, check_same_thread=False)
-		return conn
-	except Error as e:
-        	print(e)
-
-
-def create_table(create_table_sql):
-	try:
-		c = conn.cursor()
-		c.execute(create_table_sql)
-	except Error as e:
-		print(e)
-		
-def query_data(sql):
-	cur = conn.cursor()
-	cur.execute(sql)
-	rows = cur.fetchall()
-	return rows
-	
-def insert_data(sql, params):
-	cur = conn.cursor()
-	cur.execute(sql, params)
-	
-
-def initdatabase():
-	database = r"database.db"
-	
-	create_connection(database)
-
-	sql_create_flights_table = """CREATE TABLE IF NOT EXISTS flights (flightID integer PRIMARY KEY NOT NULL, planeid integer, company text, start text, destination text, duration integer, date text, time text, prize_per_ticket integer);"""
-
-	sql_create_users_table = """CREATE TABLE IF NOT EXISTS users (userID integer PRIMARY KEY NOT NULL, name text, user_name text, email text, passwort text, is_admin boolean);"""
-    
-	sql_create_seats_table = """CREATE TABLE IF NOT EXISTS seats (seat_from_flight integer, seat_number text, reserved_by integer);"""
-	
-	sql_create_plane_table = """CREATE TABLE IF NOT EXISTS planes (planeID integer PRIMARY KEY NOT NULL, seat_height integer, seat_width integer);"""
-
-    # create tables
-	if conn is not None:
-		create_table(sql_create_flights_table)
-		create_table(sql_create_users_table)
-		create_table(sql_create_seats_table)
-		create_table(sql_create_plane_table)
-		insert_data("INSERT INTO users (name, user_name, email, passwort, is_admin) VALUES (?, ?, ?, ?, ?)", ('user_name','name', 'email','p', 1))
-		insert_data("INSERT INTO planes (seat_height, seat_width) VALUES (?, ?)", (10, 6))
-		insert_data("INSERT INTO flights (planeid, company, start, destination, duration, date, time, prize_per_ticket) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (1, 'Lufthansa', 'Berlin', 'Frankfurt', 2, '10.12.2023', '10:21', 120))
-	else:
-		print("Error! cannot create the database connection.")
-	print(query_data("SELECT * FROM users"))
+app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+	data = []
+	flights = []
+	searched = False
+	result = ""
 	if request.method == "POST":
-		try:
-			if "from" in request.form:
-				if request.form["from"] != "" or request.form["to"] != "" or request.form["Departure"] != "":
-					data = []
-					query = query_data("SELECT * FROM flights WHERE start = {} OR destination = {} OR departure = {}",format(request.form["from"], request.form["to"], request.form["Departure"]))
-					print(query)
-			if "order" in request.form:
-				if request.form["order"] != "" and user != None:
-					arr = request.form["order"].replace(",", " ").split()
+		if "logout" in request.form:
+			global user
+			user = None
+		if "from" in request.form:
+			if request.form["from"] != "" or request.form["to"] != "" or request.form["Departure"] != "":
+				try:
+					flights = db.query_data("SELECT * FROM flights WHERE start = '{}' OR destination = '{}' OR date = '{}'".format(request.form["from"], request.form["to"], request.form["Departure"]))
+					searched = True
+				except BaseException as e:
+					result = "Some Error ocurred"
+					print(e)
+		if "order" in request.form:
+			if request.form["order"] != "" and user != None:
+				flight = request.form["order"].split(":")
+				for f in flight:
+					arr = f.split(',')
 					for seats in range(1, len(arr)):
-						insert_data("INSERT INTO seats (seat_from_flight, seat_number, reserved_by) VALUES (?, ?, ?)", (arr[0], arr[seats], user[0]))
-						data = "Worked"
-				else:
-					data="Not logged in"				
-				print(query_data("SELECT * FROM seats"))
-		except BaseException as e:
-			data = e
-			print(e)
+						try:
+							db.insert_data("INSERT INTO seats (seat_from_flight, seat_number, reserved_by) VALUES (?, ?, ?)", (arr[0], arr[seats], int(user.getID())))
+							result = "Reservation successful"
+						except BaseException as e:
+							result = "Some Error ocurred"
+							print(e)
+			else:
+				result="Not logged in"	
+						
 	try:
-		data = []
-		flights = query_data("SELECT * FROM flights")
+		if not searched:
+			flights = db.query_data("SELECT * FROM flights")
 		for flight in range(len(flights)):
-			planedata = query_data("SELECT * FROM planes WHERE planeID = {}".format(flights[flight][1]))
-			seats_reservated = query_data("SELECT * FROM seats WHERE seat_from_flight = {}".format(flights[flight][0]))
 			seats = []
+			planedata = db.query_data("SELECT * FROM planes WHERE planeID = {}".format(flights[flight][1]))
+			seats_reservated = db.query_data("SELECT * FROM seats WHERE seat_from_flight = {}".format(flights[flight][0]))
 			for seat in seats_reservated:
 				seats.append(seat[1])
-			print(seats_reservated)
 			seats_remaining = int(planedata[0][1]) * int(planedata[0][2]) - len(seats_reservated)
-			if len(seats_reservated) == 0:
-				data.append((flight, flights[flight][0], flights[flight][2], flights[flight][3], flights[flight][4], int(flights[flight][5]), flights[flight][6], flights[flight][7], int(flights[flight][8]), seats_remaining, int(planedata[0][1]), int(planedata[0][2]), []))
-			else:
-				data.append((flight, flights[flight][0], flights[flight][2], flights[flight][3], flights[flight][4], int(flights[flight][5]), flights[flight][6], flights[flight][7], int(flights[flight][8]), seats_remaining, int(planedata[0][1]), int(planedata[0][2]), seats))
-	except:
-		data = []
-	return render_template('index.html', data=data)
+			data.append((flight, flights[flight][0], flights[flight][2], flights[flight][3], flights[flight][4], int(flights[flight][5]), flights[flight][6], flights[flight][7], int(flights[flight][8]), seats_remaining, int(planedata[0][1]), int(planedata[0][2]), seats))
+	except BaseException as e:
+		data = "Some Error ocurred"
+		print(e)
+	loggedIn = False
+	username = ""
+	if user != None:
+		loggedIn = True
+		username = user.getUsername()
+	return render_template('index.html', data=data, loggedIn=loggedIn, username=username, result=result)
 	
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if request.method == "POST":
 	        try:
-	        	query = query_data("SELECT * FROM users WHERE user_name = {}".format(request.form["username"]))
-	        	print(query)
-	        	if query[0][4] == request.form["password"]:
+	        	query = db.query_data("SELECT * FROM users WHERE user_name = '{}'".format(request.form["username"]))
+	        	if str(query[0][4]) == str(request.form["password"]):
 	        		data = "Successful"
 	        		global user
-	        		user = (query[0][0], query[0][1], query[0][2], query[0][3], query[0][4])
+	        		user = User(query[0][0], query[0][1], query[0][2], query[0][3], query[0][4])
+	        		return redirect("/")
 	        	else:
 	        		data = "Falsches Passwort"
 	        except BaseException as e:
-	        	print(e)
 	        	data = "Kein Nutzer mit diesem Namen"
+	        	print(e)
 	        return render_template('login.html', data=[data])
 	return render_template('login.html', data=[])
 		
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 	if request.method == 'POST':
-		if request.form["username"] not in query_data("SELECT user_name FROM users"):
+		usernames = []
+		for user in db.query_data("SELECT user_name FROM users"):
+			usernames.append(user[0])
+		if request.form["username"] not in usernames:
 			if request.form["password"] == request.form["passwordrepeat"]:
-				insert_data("INSERT INTO users (name, user_name, email, passwort, is_admin) VALUES (?, ?, ?, ?, ?)", (request.form["name"], request.form["username"], request.form["email"], request.form["password"], 0))
-				data = "Successful"
+				db.insert_data("INSERT INTO users (name, user_name, email, passwort, is_admin) VALUES (?, ?, ?, ?, ?)", (request.form["name"], request.form["username"], request.form["email"], str(request.form["password"]), 0))
+				result = "Successful"
 			else:
-				data = "The Passwords are not the same"
+				result = "The Passwords are not the same"
 		else:
 			data = "Username already taken"
-		return render_template('register.html', data=[data])
-	return render_template('register.html', data=[])
+		return render_template('register.html', result=[result])
+	return render_template('register.html', result=[])
 	
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
 	if request.method == "POST":
 		global user
-		if user != None:
+		if type(user) is AdminUser:
 			try:	
-				if request.form["seat_height"] != "":
-					insert_data("INSERT INTO planes (seat_height, seat_width) VALUES (?, ?)", (request.form["seat_height"], request.form["seat_width"]))
-					result=["Successfully added a plane"]
-				if request.form["planeid"] != "":
-					for plane in query_data("SELECT planeID FROM planes"):
-						if int(request.form["planeid"]) == int(plane[0]):
-							insert_data("INSERT INTO flights (planeid, company, start, destination, duration, date, time, prize_per_ticket) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (request.form["planeid"], request.form["company"], request.form["start"], request.form["destination"], request.form["duration"], request.form["date"], request.form["time"], request.form["prize"]))
-							result=["Successfully added a flight"]
-							break
-						else:
-							result = ["No Plane with this ID exists"]
-			except:
+				if "imported_filename" in request.form:
+					with open(request.form["imported_filename"]) as f:
+    						lines = f.readlines()
+    						header = lines[0].replace('\n', '')
+    						columnname = header.split('\t')
+    						wrong_format = False
+    						if columnname[0] == "PlaneID" and columnname[1] == "Company" and columnname[2] == "Start" and columnname[3] == "Destination" and columnname[4] == "Duration" and columnname[5] == "Date" and columnname[6] == "Time" and columnname[7] == "Prize":
+    							wrong_format = True
+    							for line in range(1, len(lines)):
+    								column = lines[line].replace('\n', '').split('\t')
+    								db.insert_data("INSERT INTO flights (planeid, company, start, destination, duration, date, time, prize_per_ticket) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (int(column[0]), column[1], column[2], column[3], int(column[4]), column[5], column[6], int(column[7])))
+    						if columnname[0] == "Seat_height" and columnname[1] == "Seat_width":
+    							wrong_format = True
+    							for line in range(1, len(lines)):
+    								column = lines[line].replace('\n', '').split('\t')
+    								print(column)
+	    							db.insert_data("INSERT INTO planes (seat_height, seat_width) VALUES (?, ?)", (int(column[0]), int(column[1])))
+	    					if columnname[0] == "Seat_from_flight" and columnname[1] == "Seat_number" and columnname[2] == "Reserved_by":
+	    						wrong_format = True
+	    						for line in range(1, len(lines)):
+    								column = lines[line].replace('\n', '').split('\t')
+	    							db.insert_data("INSERT INTO seats (seat_from_flight, seat_number, reserved_by) VALUES (?, ?, ?)", (int(column[0]), column[1], int(column[2])))				
+	    					if not wrong_format:
+	    						result=["Wrong format"]
+	    					else:
+	    						result=["Successfully added the file to the database"]
+	    						
+				elif "planeid" not in request.form:
+					for seat_cancelation in request.form:
+						split = seat_cancelation.split('?')
+						db.delete_data("DELETE FROM seats WHERE seat_from_flight = {} AND seat_number = '{}'".format(split[0], split[1]))
+						result=["Successfully removed reservation"]
+				else:
+					if request.form["seat_height"] != "":
+						db.insert_data("INSERT INTO planes (seat_height, seat_width) VALUES (?, ?)", (request.form["seat_height"], request.form["seat_width"]))
+						result=["Successfully added a plane"]
+					if request.form["planeid"] != "":
+						for plane in db.query_data("SELECT planeID FROM planes"):
+							if int(request.form["planeid"]) == int(plane[0]):
+								db.insert_data("INSERT INTO flights (planeid, company, start, destination, duration, date, time, prize_per_ticket) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (request.form["planeid"], request.form["company"], request.form["start"], request.form["destination"], request.form["duration"], request.form["date"], request.form["time"], request.form["prize"]))
+								result=["Successfully added a flight"]
+								break
+							else:
+								result = ["No Plane with this ID exists"]
+			except BaseException as e:
 				result = ["Somethings went wrong"]
-			db = [query_data("SELECT * FROM planes"), query_data("SELECT * FROM flights")]
-			print(db)
-			return render_template('admin.html', data=db+[result])
+				print(e)
+			planes = db.query_data("SELECT * FROM planes")
+			flights = db.query_data("SELECT * FROM flights")
+			seats = db.query_data("SELECT * FROM seats ORDER BY seat_from_flight DESC")
+			return render_template('admin.html', planes=planes,flights=flights, result=[result], seats=seats)
 		else:
 			try:
-				query = query_data("SELECT * FROM users WHERE user_name = {}".format(request.form["username"]))
-				if query[0][4] == request.form["password"] and query[0][5] == 1:
-					db = [query_data("SELECT * FROM planes"), query_data("SELECT * FROM flights")]
+				query = db.query_data("SELECT * FROM users WHERE user_name = '{}'".format(request.form["username"]))
+				if query[0][4] == str(request.form["password"]) and query[0][5] == 1:
+					planes = db.query_data("SELECT * FROM planes")
+					flights = db.query_data("SELECT * FROM flights")
+					seats = db.query_data("SELECT * FROM seats ORDER BY seat_from_flight DESC")
 					user = AdminUser(query[0][0], query[0][1], query[0][2], query[0][3], query[0][4])
-					return render_template('admin.html', data=db)	        		
+					return render_template('admin.html', planes=planes, flights=flights, seats=seats)	        		
 				else:
-					data = "Falsches Passwort"
+					result = "Falsches Passwort"
 			except:
-				data = "Kein Nutzer mit diesem Namen"
-			return render_template('adminlogin.html', data=[data])
+				result = "Kein Nutzer mit diesem Namen"
+			return render_template('adminlogin.html', result=[result])
 	return render_template('adminlogin.html')
 	
 @app.route('/statistics', methods=['GET', 'POST'])
 def stats():
-	return render_template('statistics.html')
+	total_seats = 0
+	flights= db.query_data("SELECT * FROM flights")
+	for flight in flights:
+		plane = db.query_data("SELECT * FROM planes WHERE planeID = {}".format(flight[1]))
+		total_seats += plane[0][1]*plane[0][2]
+
+
+	remaining_seats = db.query_data("SELECT * FROM seats")
+	free_seats = total_seats - len(remaining_seats)
+
+	# Statistics
+	
+  	#total_seats = 20
+	Users_System= 15
+	
+	
+	free_perecent	= (free_seats/total_seats)*100
+	remaining_percent = (len(remaining_seats)/total_seats)*100
+
+	#Leute
+
+	headings= ("Name", "Spitzname",  "Email" )
+	data = []
+	for user in remaining_seats:
+		user2 = db.query_data("SELECT name, user_name, email FROM users WHERE userID = '{}'".format(user[2]))[0]
+		isIn = False
+		if user2 not in data:
+			data.append(user2)
+	
+	return render_template('statistics.html', free_seats=free_seats,total_seats=total_seats,free_perecent=free_perecent,remaining_percent=remaining_percent,headings=headings, data=data)
+
 
 @app.route('/help', methods=['GET', 'POST'])
 def help():
 	return render_template('help.html')
 
+@app.route('/reservation', methods=['GET', 'POST'])
+def reservation():
+	if user != None:
+		data = db.query_data("SELECT * FROM seats WHERE reserved_by = {}".format(user.getID()))
+		if len(data) != 0:
+			f = db.query_data("SELECT * FROM flights WHERE flightID = {}".format(data[0][0]))
+			p = db.query_data("SELECT * FROM planes WHERE planeID = {}".format(f[0][1]))
+			seats_reservated = db.query_data("SELECT * FROM seats WHERE seat_from_flight = {} AND reserved_by = {}".format(data[0][0], user.getID()))
+			seats = []
+			for seat in seats_reservated:
+				seats.append(seat[1])
+			flights = [[f[0][0], f[0]+p[0]+tuple([seats])]]
+			for item in data:
+				isIn = None
+				for flight in range(len(flights)):
+					if item[0] in flights[flight]:
+						isIn = flight
+				if isIn != None:
+					flights[isIn].append(item[1])
+				else:
+					f = db.query_data("SELECT * FROM flights WHERE flightID = {}".format(item[0]))
+					p = db.query_data("SELECT * FROM planes WHERE planeID = {}".format(f[0][1]))
+					seats_reservated = db.query_data("SELECT * FROM seats WHERE seat_from_flight = {} AND reserved_by = {}".format(item[0], item[2]))
+					seats = []
+					for seat in seats_reservated:
+						seats.append(seat[1])
+					flights.append([item[0], f[0]+p[0]+tuple([seats]), item[1]])
+			return render_template('reservation.html', data=flights, result=[])
+	return render_template('reservation.html', data=[], result=["No reservations yet!"])
 if __name__ == '__main__':
-	initdatabase()
-	print(str(content))
+	db.initdatabase()
 	app.run()
 

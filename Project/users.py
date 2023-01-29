@@ -5,6 +5,15 @@ class User():
         self.user_name = user_name
         self.email = email
         self.passwort = passwort
+       
+    def getID(self):
+    	return self.userID
+        
+    def getUsername(self):
+    	return self.user_name
+    
+    def getPassword(self):
+    	return self.passwort
 
 
 class AdminUser():
@@ -15,5 +24,11 @@ class AdminUser():
         self.email = email
         self.passwort = passwort
 
-    def cancel_reservation(self):
-        return True
+    def getID(self):
+    	return self.userID
+        
+    def getUsername(self):
+    	return self.user_name
+    
+    def getPassword(self):
+    	return self.passwort

@@ -1,13 +1,31 @@
+<style>
+.scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+</style>
+
 <html>
 <title>DoenAir</title>
 <head>
 	<link rel="stylesheet" href="mystyle.css">
 </head>
-<body style="margin:0px">
-<div style="display:flex;flex-direction:row;justify-content:space-around">
-	<div style="padding:25px;width:500px">
+<body style="margin:0px;">
+<div style="margin:50px;box-shadow:0px 0px 10px black;border-radius:25px;padding:10px;">
+	<div style="display:flex;flex-direction:row;justify-content:space-around;height:calc(100% - 100px)">
 		<form method="post">
-			<div style="display:flex;flex-direction:column">
+			<div style="display:flex;flex-direction:column;height:calc(100% - 60px);overflow-y:auto" class="scrollbar">
 				<h1>Add a flight to the system</h1>
 				<div style="display:flex;flex-direction:column;padding:0px 50px">
 					<div style="display:flex;flex-direction:row;justify-content:space-between;">
@@ -52,42 +70,94 @@
 						<input type="text" name="seat_width">
 					</div>
 				</div>
-				{% for message in data[2] %}
-					<h1 style="text-align:center;color:#b10000">{{message}}</h1>
-				{% endfor %}
-				<button type="submit" style="height:50px;margin-top:50px">Upload</button>
 			</div>
+			<button type="submit" style="height:50px;margin-top:10px;width:100%;">Upload</button>
+		</form>
+		<div style="display:flex;flex-direction:column;overflow-y:auto;padding:10px;" class="scrollbar">
+			<h1>All current flights</h1>
+			{% for item in flights %}
+				<div style="display:flex;flex-direction:column;padding:25px;margin-bottom:20px;background:grey;box-shadow 0px 10px 0px 5px;">
+					<h2>FlightID: {{item[0]}}</h2>
+					<div style="display:flex;flex-direction:row;justify-content:space-around">
+						<div style="display:flex;flex-direction:column;">
+							<p style="font-size:25px;margin:0px;">FlightID</p>
+							<p style="font-size:20px;text-align:center;">{{item[1]}}</p>
+						</div>
+						<div style="display:flex;flex-direction:column;">
+							<p style="font-size:25px;margin:0px;">Company</p>
+							<p style="font-size:20px;text-align:center;">{{item[2]}}</p>
+						</div>
+						<div style="display:flex;flex-direction:column;">
+							<p style="font-size:25px;margin:0px;">Start</p>
+							<p style="font-size:20px;text-align:center;">{{item[3]}}</p>
+						</div>
+						<div style="display:flex;flex-direction:column;">
+							<p style="font-size:25px;margin:0px;">Destination</p>
+							<p style="font-size:20px;text-align:center;">{{item[4]}}</p>
+						</div>
+						<div style="display:flex;flex-direction:column;">
+							<p style="font-size:25px;margin:0px;">Duration</p>
+							<p style="font-size:20px;text-align:center;">{{item[5]}}h</p>
+						</div>
+						<div style="display:flex;flex-direction:column;">
+							<p style="font-size:25px;margin:0px;">Date</p>
+							<p style="font-size:20px;text-align:center;">{{item[6]}}</p>
+						</div>
+						<div style="display:flex;flex-direction:column;">
+							<p style="font-size:25px;margin:0px;">Time</p>
+							<p style="font-size:20px;text-align:center;">{{item[7]}}</p>
+						</div>
+						<div style="display:flex;flex-direction:column;">
+							<p style="font-size:25px;margin:0px;">Prize</p>
+							<p style="font-size:20px;text-align:center;">${{item[8]}}</p>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+		<div style="display:flex;flex-direction:column;overflow-y:auto;padding:10px;" class="scrollbar">
+			<h1>All planes available</h1>
+			{% for item in planes %}
+				<div style="display:flex;flex-direction:column;padding:25px;margin-bottom:20px;background:grey;box-shadow 0px 10px 0px 5px;">
+					<h2>PlaneID: {{item[0]}}</h2>
+					<div style="display:flex;flex-direction:row;justify-content:space-around">
+						<p style="font-size:20px">Rows: {{item[1]}}</p>
+						<p style="font-size:20px">Row length: {{item[2]}}</p>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+<div style="display:flex;flex-direction:row">
+	<div style="padding:20px;width:40%;height:100%;overflow-y:auto;" class="scrollbar">
+		<h2>Cancel A Reservation?</h2>
+		<form method="POST">
+		{% for seat in seats %}
+			<div style="display:flex;flex-direction:row;padding:20px;justify-content:space-around;background:lightgrey;margin-bottom:10px;">
+				<div>
+					<p>From Flight: {{seat[0]}}</p>
+					<p>From user: {{seat[2]}}</p>
+				</div>
+				<h2>{{seat[1]}}</h2>
+				<input type="checkbox" name="{{seat[0]}}?{{seat[1]}}">
+			</div>
+		{% endfor %}
+		<button style="width:100%;height:50px" type="submit">Submit</button>
 		</form>
 	</div>
-	<div style="display:flex;flex-direction:column">
-		<h1>All current flights</h1>
-		{% for item in data[1] %}
-			<div style="display:flex;flex-direction:column;padding:25px;margin-bottom:20px;background:grey;box-shadow 0px 10px 0px 5px;">
-				<h2>FlightID: {{item[0]}}</h2>
-				<div style="display:flex;flex-direction:row;justify-content:space-around">
-					<p style="font-size:20px">Company: {{item[1]}}</p>
-					<p style="font-size:20px">Start: {{item[2]}}</p>
-					<p style="font-size:20px">Destination: {{item[3]}}</p>
-					<p style="font-size:20px">Duration: {{item[4]}}</p>
-					<p style="font-size:20px">Date: {{item[5]}}</p>
-					<p style="font-size:20px">Time: {{item[6]}}</p>
-					<p style="font-size:20px">Prize: ${{item[7]}}</p>
-				</div>
-			</div>
-		{% endfor %}
+	<div>
+		<div style="padding:20px;">
+			<h2>Import Data from file</h2>
+			<form method="post">
+				<p>Filename: </p><input type="text" name="imported_filename">
+				<button style="width:40%;height:50px;">Submit</button>
+			</form>
+		</div>
 	</div>
-	<div style="display:flex;flex-direction:column">
-		<h1>All planes available</h1>
-		{% for item in data[0] %}
-			<div style="display:flex;flex-direction:column;padding:25px;margin-bottom:20px;background:grey;box-shadow 0px 10px 0px 5px;">
-				<h2>PlaneID: {{item[0]}}</h2>
-				<div style="display:flex;flex-direction:row;justify-content:space-around">
-					<p style="font-size:20px">Rows: {{item[1]}}</p>
-					<p style="font-size:20px">Row length: {{item[2]}}</p>
-				</div>
-			</div>
-		{% endfor %}
-	</div>
+	{% for message in result %}
+		<h1 style="text-align:center;color:#b10000">{{message}}</h1>
+	{% endfor %}
 </div>
 </body>
 </html>

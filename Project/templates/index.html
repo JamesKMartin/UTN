@@ -5,12 +5,19 @@
 </head>
 <body style="margin:0px">
 <div id="navbar" style="height:50px;display:flex;align-items:center;justify-content:right;position:fixed;width:100%;background:white;z-index:2;">
-  <a href="login" style="margin:50px;font-size:20px;color:black;text-decoration:none">Login</a>
-  <a href="statistics" style="margin:50px;font-size:20px;color:black;text-decoration:none">Statistics</a>
-  <a href="help" style="margin:50px;font-size:20px;color:black;text-decoration:none">Help</a>
+{% if not loggedIn %}
+	<a href="login" style="margin:50px;font-size:20px;color:black;text-decoration:none">Login</a>
+	<a href="statistics" style="margin:50px;font-size:20px;color:black;text-decoration:none">Statistics</a>
+	<a href="admin" style="margin:50px;font-size:20px;color:black;text-decoration:none">Admin</a>
+{% else %}
+	<a href="reservation" style="margin:50px;font-size:20px;">{{username}}</a>
+	<form method="POST" style="margin:0px"><button type="submit" style="border:none;background:white;font-size:20px;" name="logout">Logout</button></form>
+	<a href="statistics" style="margin:50px;font-size:20px;color:black;text-decoration:none">Statistics</a>
+	<a href="admin" style="margin:50px;font-size:20px;color:black;text-decoration:none">Admin</a>
+{% endif %}
 </div>
 <img src="https://images.wallpaperscraft.com/image/single/airplane_sky_flight_clouds_height_118356_3840x2160.jpg" alt="Plane" style="width:100%;height:100%">
-<div style="position:absolute;top:40%;left:25%;width:50%;background-color:white;box-shadow: 0px 0px 20px BLACK;padding:20px">
+<div style="position:absolute;top:40%;left:25%;width:50%;background-color:white;box-shadow: 0px 0px 20px BLACK;padding:20px;border-radius:20px;">
 	<h1>Where do you want to go?</h1>
 	<form method="post">
 		<div style="display:flex;justify-content:space-evenly;">
@@ -58,9 +65,9 @@
 					<p  style="font-size:20px;margin:0px;text-align:center">Prize: ${{item[8]}}</p>
 					<p  style="font-size:20px;margin:0px;text-align:center">Seats remaining: {{item[9]}}</p>
 				</div>
-				<button , onclick="openWindow(1)", name="book" style="height:50px;width:200px">Book Ticket</button>
+				<button , onclick="openWindow({{item[0]}})", name="book" style="height:50px;width:200px">Book Ticket</button>
 			</div>
-			<div id="seatwindow1" style="display:none;margin-top: 50px">
+			<div id="seatwindow{{item[0]}}" style="display:none;margin-top: 50px">
 				<h2>Choose your seats:</h2>
 				<div style="display:flex; justify-content:center">
 					{% for seats_height in range(item[10]) %}
@@ -90,7 +97,10 @@
 				<p>Cost: $</p>
 				<p id="cost">0</p>
 			</div>
-			<button style="border:none;padding:20px;border-radius:10px;background:lightsteelblue">Submit</button>
+			<button style="border:none;padding:20px;border-radius:10px;background:lightsteelblue;width:100%">Submit</button>
+			<div>
+				<p style="color:red;margin:25px;font-size:25px;text-align:center;">{{result}}</p>
+			</div>
 		</form>
 	</div>
 </div>
@@ -112,35 +122,34 @@ function chooseSeat(seat, id, prize, disabled) {
 		const input = document.getElementById('inputOrder')
 		let cost = parseInt(el.innerText);
 		if (arr.length < 1) {
-			arr.push([id, seat]);
+			arr.push([id, seat, ":"]);
 			cost += prize;
 		} else {
-			let id_exits = false;
+			let id_exists = false;
 			for (let i = 0; i < arr.length; i++) {
 				if (arr[i].includes(id)) {
-					id_exits = true;
+					id_exists = true;
 					if (arr[i].includes(seat)) {
 						arr[i] = arrayRemove(arr[i], seat);
 						cost -= prize;
-						if (arr[i].length < 2) {
+						if (arr[i].length < 3) {
 							arr = arrayRemove(arr, arr[i]);
 						}
 					} else {
-						arr[i].push(seat);
+						arr[i].splice(arr[i].length-1, 0, seat)
 						cost += prize;
 					}
 				}
 			}
-			if (!id_exits) {
-				arr.push([id, seat]);
+			if (!id_exists) {
+				arr.push([id, seat, ":"]);
 				cost += prize;
 			}
 		}
-		console.log(arr);
 		let text = "<div style='display:flex;flex-direction:column'>";
 			for (let i = 0; i < arr.length; i++) {
 				text += "<h2>FlightID: "+arr[i][0]+"</h2>";
-				for (let j = 1; j < arr[i].length; j++) {
+				for (let j = 1; j < arr[i].length-1; j++) {
 					text += "<p>Flightseat: "+arr[i][j]+"</p>";
 				}
 			}
