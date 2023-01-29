@@ -8,10 +8,12 @@
  An admin user can add or cancel flights manually or using a .txt file. The programm will read the file and assign the airplane data to a dataset. The aircraft data is in a format of columns and rows and is needed to display the seats in order for them to be selected by users. The admin also has access to statistics like the number of users, which specific seats are taken or general information like the percentage of seats taken on any given flight or the number of users. 
  A help section exists on the site, that explains how to log on and how to select and reserve a seat. 
 # Code Examples:
-## Register and Login:
- 
+## Login:
+ ![ScreenShot](https://github.com/JamesKMartin/UTN/blob/Screenshots/login.png)
 ## Seat Selection:
-
+ ![ScreenShot](https://github.com/JamesKMartin/UTN/blob/Screenshots/seat.png)
+## Statistics Page:
+ ![ScreenShot](https://github.com/JamesKMartin/UTN/blob/Screenshots/stats.png)
 ## License:
  Licensed under the Apache License, Version 2.0 (the "License"); you may not use [...] except in compliance with the License. A copy of the License is  included in the project, see the file LICENSE.
  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License
