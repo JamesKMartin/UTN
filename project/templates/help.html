@@ -6,6 +6,8 @@
 			#navbar {
 				height: 50px;
 				display: flex;
+				top: 0;
+				left: 0;
 				align-items: center;
 				justify-content: flex-end;
 				position: fixed;
@@ -62,10 +64,10 @@
 		<title>DoenAir - Hilfe</title>
 	</head>
 	<body>
-		<div id="navbar">
-			<a href="login">Anmelden</a>
-			<a href="statistics">Statistiken</a>
-			<a href="help">Hilfe</a>
+		<div id="navbar" style="height:50px;display:flex;align-items:center;justify-content:right;position:fixed;width:100%;background:white;z-index:2;">
+			<a href="login" style="margin:50px;font-size:20px;color:black;text-decoration:none">Login</a>
+			<a href="statistics" style="margin:50px;font-size:20px;color:black;text-decoration:none">Statistics</a>
+			<a href="help" style="margin:50px;font-size:20px;color:black;text-decoration:none">Help</a>
 		</div>
 		<div class="container">
 			<div class="content">
