@@ -65,8 +65,8 @@ def login():
 	if request.method == "POST":
 	        try:
 	        	query = db.query_data("SELECT * FROM users WHERE user_name = '{}'".format(request.form["username"]))
-	        	if str(query[0][4]) == str(request.form["password"]):
-	        		data = "Successful"
+				if str(query[0][4]) == str(request.form["password"]):
+					data = "Successful"
 	        		global user
 	        		user = User(query[0][0], query[0][1], query[0][2], query[0][3], query[0][4])
 	        		return redirect("/")
@@ -182,23 +182,22 @@ def stats():
 
 	# Statistics
 	
-  	#total_seats = 20
-	Users_System= 15
-	
-	
-	free_perecent	= (free_seats/total_seats)*100
-	remaining_percent = (len(remaining_seats)/total_seats)*100
+	if total_seats == 0:
+		free_perecent = 0
+		remaining_percent = 0
+	else:
+		free_perecent	= (free_seats/total_seats)*100
+		remaining_percent = (len(remaining_seats)/total_seats)*100
 
 	#Leute
 
 	headings= ("Name", "Spitzname",  "Email" )
 	data = []
 	for user in remaining_seats:
-		user2 = db.query_data("SELECT name, user_name, email FROM users WHERE userID = '{}'".format(user[2]))[0]
-		isIn = False
-		if user2 not in data:
-			data.append(user2)
-	
+		data.append(db.query_data("SELECT name, user_name, email FROM users WHERE userID = '{}'".format(user[2]))[0])
+	if data ==[]:	
+		data= (( "No_USer",  "No_Nick", "noemail@email.de"),)
+
 	return render_template('statistics.html', free_seats=free_seats,total_seats=total_seats,free_perecent=free_perecent,remaining_percent=remaining_percent,headings=headings, data=data)
 
 
