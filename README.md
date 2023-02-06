@@ -15,21 +15,24 @@
 ## Statistics Page:
  ![ScreenShot](https://github.com/JamesKMartin/UTN/blob/Screenshots/stats.png)
  
-#Credits
+# Credits
  
-##Nele Hübscher
+## Nele Hübscher
+Database and Organisation
 
-##James Martin
+## James Martin
 
-##Wyron Papadimitriou
+## Wyron Papadimitriou
+Login and Registration
 
-##Eric Harder
-
+## Eric Harder
 Statistics and Help page
 
-##Fabio Potrykus
+## Fabio Potrykus
 
-##Navya Saginala
+
+## Navya Saginala
+User and Admin Page
  
 ## License:
  Licensed under the Apache License, Version 2.0 (the "License"); you may not use [...] except in compliance with the License. A copy of the License is  included in the project, see the file LICENSE.
