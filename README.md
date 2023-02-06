@@ -15,13 +15,20 @@
 ## Statistics Page:
  ![ScreenShot](https://github.com/JamesKMartin/UTN/blob/Screenshots/stats.png)
  
- #Credits
+#Credits
+ 
 ##Nele Hübscher
+
 ##James Martin
+
 ##Wyron Papadimitriou
+
 ##Eric Harder
+
 Statistics and Help page
+
 ##Fabio Potrykus
+
 ##Navya Saginala
  
 ## License:
