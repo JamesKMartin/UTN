@@ -33,7 +33,7 @@ Statistics and Help page
 Flask Expert and Project Management
 
 ## Navya Saginala
-User and Admin Page
+User Reservation Page
  
 ## License:
  Licensed under the Apache License, Version 2.0 (the "License"); you may not use [...] except in compliance with the License. A copy of the License is  included in the project, see the file LICENSE.
