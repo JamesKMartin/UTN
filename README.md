@@ -21,6 +21,7 @@
 Database and Organisation
 
 ## James Martin
+Testing, Merging Code
 
 ## Wyron Papadimitriou
 Login and Registration
@@ -29,7 +30,7 @@ Login and Registration
 Statistics and Help page
 
 ## Fabio Potrykus
-
+Flask Expert and Project Management
 
 ## Navya Saginala
 User and Admin Page
