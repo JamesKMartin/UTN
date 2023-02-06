@@ -26,10 +26,12 @@ def home():
 					print(e)
 		if "order" in request.form:
 			if request.form["order"] != "" and user != None:
-				flight = request.form["order"].split(":")
+				flight = request.form["order"].replace(',','').split(":")
+				flight.pop()
+				print(flight)
 				for f in flight:
-					arr = f.split(',')
-					for seats in range(1, len(arr)):
+					arr = f.split('?')
+					for seats in range(1, len(arr)-1):
 						try:
 							db.insert_data("INSERT INTO seats (seat_from_flight, seat_number, reserved_by) VALUES (?, ?, ?)", (arr[0], arr[seats], int(user.getID())))
 							result = "Reservation successful"
@@ -65,8 +67,8 @@ def login():
 	if request.method == "POST":
 	        try:
 	        	query = db.query_data("SELECT * FROM users WHERE user_name = '{}'".format(request.form["username"]))
-				if str(query[0][4]) == str(request.form["password"]):
-					data = "Successful"
+	        	if str(query[0][4]) == str(request.form["password"]):
+	        		data = "Successful"
 	        		global user
 	        		user = User(query[0][0], query[0][1], query[0][2], query[0][3], query[0][4])
 	        		return redirect("/")
@@ -88,10 +90,11 @@ def register():
 			if request.form["password"] == request.form["passwordrepeat"]:
 				db.insert_data("INSERT INTO users (name, user_name, email, passwort, is_admin) VALUES (?, ?, ?, ?, ?)", (request.form["name"], request.form["username"], request.form["email"], str(request.form["password"]), 0))
 				result = "Successful"
+				return redirect("/login")
 			else:
 				result = "The Passwords are not the same"
 		else:
-			data = "Username already taken"
+			result = "Username already taken"
 		return render_template('register.html', result=[result])
 	return render_template('register.html', result=[])
 	
@@ -182,22 +185,25 @@ def stats():
 
 	# Statistics
 	
+  	#total_seats = 20
+	Users_System= 15
+	
 	if total_seats == 0:
-		free_perecent = 0
-		remaining_percent = 0
+		remaining_percent = 0	
 	else:
-		free_perecent	= (free_seats/total_seats)*100
 		remaining_percent = (len(remaining_seats)/total_seats)*100
+	free_perecent	= (free_seats/total_seats)*100
 
 	#Leute
 
 	headings= ("Name", "Spitzname",  "Email" )
 	data = []
 	for user in remaining_seats:
-		data.append(db.query_data("SELECT name, user_name, email FROM users WHERE userID = '{}'".format(user[2]))[0])
-	if data ==[]:	
-		data= (( "No_USer",  "No_Nick", "noemail@email.de"),)
-
+		user2 = db.query_data("SELECT name, user_name, email FROM users WHERE userID = '{}'".format(user[2]))[0]
+		isIn = False
+		if user2 not in data:
+			data.append(user2)
+	
 	return render_template('statistics.html', free_seats=free_seats,total_seats=total_seats,free_perecent=free_perecent,remaining_percent=remaining_percent,headings=headings, data=data)
 
 

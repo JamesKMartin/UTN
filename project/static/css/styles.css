@@ -1,31 +1,30 @@
 #navbar {
   position: fixed;
   top: 0;
-	left: 0;
   width: 100%;
   z-index: 2;
 }
 
 table {
-  margin-top: 700px; /* add space above the table */
-  width: 60%;
-  margin-left: 300px;
+  margin-top: 900px; /* add space above the table */
+  margin-left: 30%;
   margin-bottom: 80px;
   font-family: Helvetica; /* set the font to Helvetica */
   font-size: 14px;
   color: white;
   text-align: center;
-  
 }
 
 tr:nth-child(even) {
-
+  width: 40%;
   background-color: hsl(217, 100%, 13%);  
   text-align: center;
 }
 
-td {
-  padding-left: 30px;
-  padding-right: 30px;
+.table__header {
+  width: 40%;
 }
 
+.table__cell {
+  width: 40%;
+}

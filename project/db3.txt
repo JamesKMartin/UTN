@@ -1,0 +1,3 @@
+Seat_from_flight	Seat_number	Reserved_by
+1	A1	1
+2	B3	1	

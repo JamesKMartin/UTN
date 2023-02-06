@@ -7,12 +7,12 @@
 <div id="navbar" style="height:50px;display:flex;align-items:center;justify-content:right;position:fixed;width:100%;background:white;z-index:2;">
 {% if not loggedIn %}
 	<a href="login" style="margin:50px;font-size:20px;color:black;text-decoration:none">Login</a>
-	<a href="statistics" style="margin:50px;font-size:20px;color:black;text-decoration:none">Statistics</a>
+	<a href="help" style="margin:50px;font-size:20px;color:black;text-decoration:none">Help</a>
 	<a href="admin" style="margin:50px;font-size:20px;color:black;text-decoration:none">Admin</a>
 {% else %}
 	<a href="reservation" style="margin:50px;font-size:20px;">{{username}}</a>
 	<form method="POST" style="margin:0px"><button type="submit" style="border:none;background:white;font-size:20px;" name="logout">Logout</button></form>
-	<a href="statistics" style="margin:50px;font-size:20px;color:black;text-decoration:none">Statistics</a>
+	<a href="help" style="margin:50px;font-size:20px;color:black;text-decoration:none">Help</a>
 	<a href="admin" style="margin:50px;font-size:20px;color:black;text-decoration:none">Admin</a>
 {% endif %}
 </div>
@@ -122,41 +122,42 @@ function chooseSeat(seat, id, prize, disabled) {
 		const input = document.getElementById('inputOrder')
 		let cost = parseInt(el.innerText);
 		if (arr.length < 1) {
-			arr.push([id, seat, ":"]);
-			cost += prize;
+			arr.push([id+"?", seat+"?", ":"]);
+			cost += prize; 
 		} else {
 			let id_exists = false;
 			for (let i = 0; i < arr.length; i++) {
-				if (arr[i].includes(id)) {
+				if (arr[i].includes(id+"?")) { 
 					id_exists = true;
-					if (arr[i].includes(seat)) {
-						arr[i] = arrayRemove(arr[i], seat);
+					if (arr[i].includes(seat+"?")) {
+						arr[i] = arrayRemove(arr[i], seat+"?");
 						cost -= prize;
 						if (arr[i].length < 3) {
 							arr = arrayRemove(arr, arr[i]);
 						}
 					} else {
-						arr[i].splice(arr[i].length-1, 0, seat)
+						arr[i].splice(arr[i].length-1, 0, seat+"?")
 						cost += prize;
 					}
 				}
 			}
 			if (!id_exists) {
-				arr.push([id, seat, ":"]);
+				arr.push([id+"?", seat+"?", ":"]);
 				cost += prize;
 			}
 		}
 		let text = "<div style='display:flex;flex-direction:column'>";
 			for (let i = 0; i < arr.length; i++) {
-				text += "<h2>FlightID: "+arr[i][0]+"</h2>";
+				text += "<h2>FlightID: "+arr[i][0].replace('?', '')+"</h2>";
 				for (let j = 1; j < arr[i].length-1; j++) {
-					text += "<p>Flightseat: "+arr[i][j]+"</p>";
+					text += "<p>Flightseat: "+arr[i][j].replace('?', '')+"</p>";
 				}
 			}
 		text += "</div>";
 		el2.innerHTML = text;
 		el.innerText = cost;
-		input.value = arr
+		input.value = arr;
+		console.log(arr);
 	}
 }
 

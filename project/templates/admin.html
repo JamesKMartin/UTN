@@ -22,8 +22,11 @@
 	<link rel="stylesheet" href="mystyle.css">
 </head>
 <body style="margin:0px;">
-<div style="margin:50px;box-shadow:0px 0px 10px black;border-radius:25px;padding:10px;">
-	<div style="display:flex;flex-direction:row;justify-content:space-around;height:calc(100% - 100px)">
+<div id="navbar" style="height:50px;display:flex;align-items:center;justify-content:right;position:absolute;top:0;width:100%;background:white;z-index:2;">
+	<a href="statistics" style="margin:50px;font-size:20px;color:black;text-decoration:none">Statistics</a>
+</div>
+<div style="margin:100px;box-shadow:0px 0px 10px black;border-radius:25px;padding:10px;">
+	<div style="display:flex;flex-direction:row;justify-content:space-around;height:calc(100% - 200px)">
 		<form method="post">
 			<div style="display:flex;flex-direction:column;height:calc(100% - 60px);overflow-y:auto" class="scrollbar">
 				<h1>Add a flight to the system</h1>
@@ -149,8 +152,9 @@
 	<div>
 		<div style="padding:20px;">
 			<h2>Import Data from file</h2>
-			<form method="post">
+			<form method="post" enctype="multipart/form-data">
 				<p>Filename: </p><input type="text" name="imported_filename">
+				 <input type="file" id="myfile" name="myfile" multiple="multiple" />
 				<button style="width:40%;height:50px;">Submit</button>
 			</form>
 		</div>
