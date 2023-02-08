@@ -188,11 +188,13 @@ def stats():
   	#total_seats = 20
 	Users_System= 15
 	
+	free_percent = 100
+	
 	if total_seats == 0:
-		remaining_percent = 0	
+		remaining_percent = 0
 	else:
 		remaining_percent = (len(remaining_seats)/total_seats)*100
-	free_perecent	= (free_seats/total_seats)*100
+		free_percent	= (free_seats/total_seats)*100
 
 	#Leute
 
@@ -204,7 +206,7 @@ def stats():
 		if user2 not in data:
 			data.append(user2)
 	
-	return render_template('statistics.html', free_seats=free_seats,total_seats=total_seats,free_perecent=free_perecent,remaining_percent=remaining_percent,headings=headings, data=data)
+	return render_template('statistics.html', free_seats=free_seats,total_seats=total_seats,free_perecent=free_percent,remaining_percent=remaining_percent,headings=headings, data=data)
 
 
 @app.route('/help', methods=['GET', 'POST'])
